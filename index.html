@@ -6,1015 +6,683 @@
   <title>EaglerCraft Panel</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
- 
     :root {
-      --bg: #0a0a0a;
-      --bg2: #111111;
-      --bg3: #1a1a1a;
-      --border: #2a2a2a;
-      --border2: #3a3a3a;
-      --green: #55ff55;
-      --green2: #3a8a3a;
-      --red: #ff5555;
-      --yellow: #ffaa00;
-      --blue: #5599ff;
-      --gray: #888888;
-      --white: #eeeeee;
-      --pixel: 'Press Start 2P', monospace;
-      --mono: 'Share Tech Mono', monospace;
+      --bg:#0a0a0a; --bg2:#111111; --bg3:#1a1a1a;
+      --border:#2a2a2a; --border2:#3a3a3a;
+      --green:#55ff55; --green2:#2a6a2a;
+      --red:#ff5555; --yellow:#ffaa00; --blue:#5599ff;
+      --gray:#888888; --white:#eeeeee;
+      --pixel:'Press Start 2P',monospace; --mono:'Share Tech Mono',monospace;
     }
- 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
- 
-    body {
-      background: var(--bg);
-      color: var(--white);
-      font-family: var(--mono);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
- 
-    /* Pixel grid background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(85,255,85,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(85,255,85,0.02) 1px, transparent 1px);
-      background-size: 32px 32px;
-      pointer-events: none;
-      z-index: 0;
-    }
- 
-    /* ===================== LOGIN ===================== */
-    #loginScreen {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      background: var(--bg);
-    }
- 
-    .login-box {
-      width: 400px;
-      border: 2px solid var(--green2);
-      background: var(--bg2);
-      padding: 2rem;
-      position: relative;
-    }
- 
-    .login-box::before {
-      content: '';
-      position: absolute;
-      top: -6px; left: -6px; right: -6px; bottom: -6px;
-      border: 2px solid rgba(85,255,85,0.15);
-      pointer-events: none;
-    }
- 
-    .login-title {
-      font-family: var(--pixel);
-      font-size: 11px;
-      color: var(--green);
-      text-align: center;
-      margin-bottom: 2rem;
-      line-height: 1.8;
-      text-shadow: 0 0 20px rgba(85,255,85,0.5);
-    }
- 
-    .login-title span {
-      display: block;
-      font-size: 7px;
-      color: var(--gray);
-      margin-top: 6px;
-    }
- 
-    .field-label {
-      font-family: var(--pixel);
-      font-size: 7px;
-      color: var(--gray);
-      margin-bottom: 6px;
-      display: block;
-    }
- 
-    .field-input {
-      width: 100%;
-      background: var(--bg3);
-      border: 2px solid var(--border2);
-      color: var(--white);
-      font-family: var(--mono);
-      font-size: 14px;
-      padding: 10px 12px;
-      outline: none;
-      transition: border-color 0.2s;
-      margin-bottom: 1rem;
-    }
- 
-    .field-input:focus {
-      border-color: var(--green2);
-      box-shadow: 0 0 8px rgba(85,255,85,0.2);
-    }
- 
-    .btn {
-      display: block;
-      width: 100%;
-      background: var(--green2);
-      border: 2px solid var(--green);
-      color: var(--bg);
-      font-family: var(--pixel);
-      font-size: 9px;
-      padding: 12px;
-      cursor: pointer;
-      transition: all 0.1s;
-      text-align: center;
-      text-transform: uppercase;
-    }
- 
-    .btn:hover {
-      background: var(--green);
-      box-shadow: 0 0 16px rgba(85,255,85,0.4);
-    }
- 
-    .btn:active { transform: scale(0.98); }
- 
-    .btn-red {
-      background: #5a1a1a;
-      border-color: var(--red);
-      color: var(--red);
-    }
-    .btn-red:hover { background: var(--red); color: var(--bg); box-shadow: 0 0 16px rgba(255,85,85,0.4); }
- 
-    .btn-small {
-      display: inline-block;
-      width: auto;
-      padding: 6px 12px;
-      font-size: 7px;
-    }
- 
-    .login-error {
-      color: var(--red);
-      font-family: var(--pixel);
-      font-size: 7px;
-      text-align: center;
-      margin-top: 10px;
-      min-height: 16px;
-    }
- 
-    /* ===================== MAIN LAYOUT ===================== */
-    #mainApp {
-      display: none;
-      min-height: 100vh;
-      position: relative;
-      z-index: 1;
-    }
- 
-    /* HEADER */
-    header {
-      background: var(--bg2);
-      border-bottom: 2px solid var(--border);
-      padding: 0 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 56px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
- 
-    .header-logo {
-      font-family: var(--pixel);
-      font-size: 10px;
-      color: var(--green);
-      text-shadow: 0 0 12px rgba(85,255,85,0.4);
-    }
- 
-    .header-logo span {
-      color: var(--gray);
-      font-size: 7px;
-    }
- 
-    .header-user {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-family: var(--pixel);
-      font-size: 7px;
-      color: var(--gray);
-    }
- 
-    .user-badge {
-      background: var(--bg3);
-      border: 1px solid var(--border2);
-      padding: 4px 10px;
-      color: var(--green);
-    }
- 
-    /* NAV */
-    nav {
-      background: var(--bg2);
-      border-bottom: 2px solid var(--border);
-      display: flex;
-      gap: 0;
-      padding: 0 1.5rem;
-      position: sticky;
-      top: 56px;
-      z-index: 49;
-    }
- 
-    .nav-item {
-      font-family: var(--pixel);
-      font-size: 8px;
-      padding: 14px 20px;
-      cursor: pointer;
-      color: var(--gray);
-      border-bottom: 3px solid transparent;
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      user-select: none;
-    }
- 
-    .nav-item:hover { color: var(--white); background: var(--bg3); }
-    .nav-item.active { color: var(--green); border-bottom-color: var(--green); }
- 
-    .nav-icon { font-size: 12px; }
- 
-    /* PAGES */
-    .page { display: none; padding: 1.5rem; }
-    .page.active { display: block; }
- 
-    /* ===================== STATUS PAGE ===================== */
-    .status-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
- 
-    .status-card {
-      background: var(--bg2);
-      border: 2px solid var(--border);
-      padding: 1.2rem;
-      position: relative;
-    }
- 
-    .status-card::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 3px; height: 100%;
-      background: var(--green);
-    }
- 
-    .status-card.red::after { background: var(--red); }
-    .status-card.yellow::after { background: var(--yellow); }
-    .status-card.blue::after { background: var(--blue); }
- 
-    .card-label {
-      font-family: var(--pixel);
-      font-size: 7px;
-      color: var(--gray);
-      margin-bottom: 8px;
-    }
- 
-    .card-value {
-      font-family: var(--pixel);
-      font-size: 14px;
-      color: var(--green);
-    }
- 
-    .card-value.red { color: var(--red); }
-    .card-value.yellow { color: var(--yellow); }
- 
-    .status-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background: var(--green);
-      margin-right: 6px;
-      animation: blink 1s infinite;
-    }
- 
-    .status-dot.red { background: var(--red); animation: none; }
-    .status-dot.yellow { background: var(--yellow); }
- 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
- 
-    .actions-row {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
- 
-    .actions-row .btn { width: auto; flex: 1; }
- 
-    /* ===================== CONSOLE PAGE ===================== */
-    .console-wrap {
-      background: var(--bg2);
-      border: 2px solid var(--border);
-      height: calc(100vh - 200px);
-      display: flex;
-      flex-direction: column;
-    }
- 
-    .console-header {
-      background: var(--bg3);
-      border-bottom: 2px solid var(--border);
-      padding: 8px 14px;
-      font-family: var(--pixel);
-      font-size: 7px;
-      color: var(--gray);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
- 
-    .console-output {
-      flex: 1;
-      overflow-y: auto;
-      padding: 10px 14px;
-      font-family: var(--mono);
-      font-size: 13px;
-      line-height: 1.6;
-      scroll-behavior: smooth;
-    }
- 
-    .console-output::-webkit-scrollbar { width: 6px; }
-    .console-output::-webkit-scrollbar-track { background: var(--bg3); }
-    .console-output::-webkit-scrollbar-thumb { background: var(--border2); }
- 
-    .log-line { padding: 1px 0; word-break: break-all; }
-    .log-line .time { color: var(--gray); margin-right: 8px; font-size: 11px; }
-    .log-line.error .text { color: var(--red); }
-    .log-line.warn .text { color: var(--yellow); }
-    .log-line.command .text { color: var(--blue); }
-    .log-line.info .text { color: var(--white); }
- 
-    .console-input-row {
-      border-top: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 8px 14px;
-      gap: 10px;
-    }
- 
-    .console-prompt {
-      font-family: var(--pixel);
-      font-size: 9px;
-      color: var(--green);
-      white-space: nowrap;
-    }
- 
-    .console-input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--white);
-      font-family: var(--mono);
-      font-size: 14px;
-      outline: none;
-    }
- 
-    .console-send {
-      background: var(--green2);
-      border: 1px solid var(--green);
-      color: var(--bg);
-      font-family: var(--pixel);
-      font-size: 7px;
-      padding: 6px 14px;
-      cursor: pointer;
-    }
- 
-    .console-send:hover { background: var(--green); }
- 
-    /* ===================== ACCOUNT PAGE ===================== */
-    .section-title {
-      font-family: var(--pixel);
-      font-size: 9px;
-      color: var(--green);
-      margin-bottom: 1rem;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
- 
-    .user-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 1.5rem;
-    }
- 
-    .user-table th {
-      background: var(--bg3);
-      font-family: var(--pixel);
-      font-size: 7px;
-      color: var(--gray);
-      padding: 10px 12px;
-      text-align: left;
-      border-bottom: 2px solid var(--border);
-    }
- 
-    .user-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
- 
-    .user-table tr:hover td { background: var(--bg3); }
- 
-    .role-badge {
-      font-family: var(--pixel);
-      font-size: 6px;
-      padding: 3px 8px;
-      border: 1px solid;
-    }
- 
-    .role-badge.admin { color: var(--green); border-color: var(--green2); }
-    .role-badge.user { color: var(--gray); border-color: var(--border2); }
- 
-    .add-user-form {
-      background: var(--bg2);
-      border: 2px solid var(--border);
-      padding: 1.2rem;
-      margin-top: 1rem;
-    }
- 
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
- 
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
- 
-    /* ===================== MODAL ===================== */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.8);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-    }
- 
-    .modal-overlay.open { display: flex; }
- 
-    .modal {
-      background: var(--bg2);
-      border: 2px solid var(--border2);
-      padding: 1.5rem;
-      width: 360px;
-    }
- 
-    .modal-title {
-      font-family: var(--pixel);
-      font-size: 9px;
-      color: var(--green);
-      margin-bottom: 1.2rem;
-    }
- 
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 1.2rem;
-    }
- 
-    /* ===================== TOAST ===================== */
-    #toast {
-      position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
-      background: var(--bg2);
-      border: 2px solid var(--green2);
-      color: var(--green);
-      font-family: var(--pixel);
-      font-size: 7px;
-      padding: 12px 18px;
-      z-index: 999;
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s;
-    }
- 
-    #toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
- 
-    #toast.error { border-color: var(--red); color: var(--red); }
- 
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg3); }
-    ::-webkit-scrollbar-thumb { background: var(--border2); }
- 
-    .select-input {
-      background: var(--bg3);
-      border: 2px solid var(--border2);
-      color: var(--white);
-      font-family: var(--mono);
-      font-size: 14px;
-      padding: 10px 12px;
-      outline: none;
-      width: 100%;
-    }
- 
-    select.select-input option { background: var(--bg3); }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--white);font-family:var(--mono);min-height:100vh;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(85,255,85,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(85,255,85,0.015) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;z-index:0;}
+
+    /* ===== AUTH SCREENS ===== */
+    .auth-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;background:var(--bg);}
+    .auth-box{width:420px;border:2px solid var(--green2);background:var(--bg2);padding:2rem;position:relative;}
+    .auth-box::before{content:'';position:absolute;top:-5px;left:-5px;right:-5px;bottom:-5px;border:1px solid rgba(85,255,85,0.1);pointer-events:none;}
+    .auth-title{font-family:var(--pixel);font-size:11px;color:var(--green);text-align:center;margin-bottom:1.5rem;line-height:1.8;text-shadow:0 0 20px rgba(85,255,85,0.4);}
+    .auth-title small{display:block;font-size:7px;color:var(--gray);margin-top:6px;}
+    .auth-tabs{display:flex;margin-bottom:1.5rem;border-bottom:2px solid var(--border2);}
+    .auth-tab{flex:1;font-family:var(--pixel);font-size:8px;padding:10px;cursor:pointer;color:var(--gray);text-align:center;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+    .auth-tab:hover{color:var(--white);}
+    .auth-tab.active{color:var(--green);border-bottom-color:var(--green);}
+    .auth-form{display:none;}
+    .auth-form.active{display:block;}
+    .field-label{font-family:var(--pixel);font-size:7px;color:var(--gray);margin-bottom:5px;display:block;}
+    .field-input{width:100%;background:var(--bg3);border:2px solid var(--border2);color:var(--white);font-family:var(--mono);font-size:14px;padding:10px 12px;outline:none;transition:border-color .2s;margin-bottom:.9rem;}
+    .field-input:focus{border-color:var(--green2);box-shadow:0 0 8px rgba(85,255,85,0.15);}
+    .auth-error{color:var(--red);font-family:var(--pixel);font-size:7px;text-align:center;margin-top:8px;min-height:14px;}
+    .auth-closed{color:var(--yellow);font-family:var(--pixel);font-size:7px;text-align:center;padding:12px;border:1px solid var(--yellow);background:rgba(255,170,0,0.05);margin-bottom:1rem;}
+
+    /* ===== BUTTONS ===== */
+    .btn{display:block;width:100%;background:var(--green2);border:2px solid var(--green);color:var(--bg);font-family:var(--pixel);font-size:8px;padding:11px;cursor:pointer;transition:all .1s;text-align:center;}
+    .btn:hover{background:var(--green);box-shadow:0 0 14px rgba(85,255,85,0.35);}
+    .btn:active{transform:scale(.98);}
+    .btn:disabled{opacity:.4;cursor:default;}
+    .btn-red{background:#3a0a0a;border-color:var(--red);color:var(--red);}
+    .btn-red:hover{background:var(--red);color:var(--bg);box-shadow:0 0 14px rgba(255,85,85,0.35);}
+    .btn-yellow{background:#3a2a0a;border-color:var(--yellow);color:var(--yellow);}
+    .btn-yellow:hover{background:var(--yellow);color:var(--bg);}
+    .btn-sm{width:auto;display:inline-block;padding:6px 12px;font-size:7px;}
+
+    /* ===== MAIN APP ===== */
+    #mainApp{display:none;min-height:100vh;position:relative;z-index:1;}
+    header{background:var(--bg2);border-bottom:2px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:54px;position:sticky;top:0;z-index:50;}
+    .header-logo{font-family:var(--pixel);font-size:9px;color:var(--green);text-shadow:0 0 12px rgba(85,255,85,0.35);}
+    .header-logo small{display:block;font-size:6px;color:var(--gray);margin-top:3px;}
+    .header-right{display:flex;align-items:center;gap:10px;}
+    .user-chip{background:var(--bg3);border:1px solid var(--border2);padding:4px 10px;font-family:var(--pixel);font-size:7px;color:var(--green);}
+
+    nav{background:var(--bg2);border-bottom:2px solid var(--border);display:flex;padding:0 1.5rem;position:sticky;top:54px;z-index:49;overflow-x:auto;}
+    .nav-item{font-family:var(--pixel);font-size:7px;padding:14px 16px;cursor:pointer;color:var(--gray);border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:7px;user-select:none;}
+    .nav-item:hover{color:var(--white);background:var(--bg3);}
+    .nav-item.active{color:var(--green);border-bottom-color:var(--green);}
+
+    .page{display:none;padding:1.5rem;max-width:1100px;}
+    .page.active{display:block;}
+
+    /* ===== STATUS ===== */
+    .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem;}
+    .stat-card{background:var(--bg2);border:2px solid var(--border);padding:1.1rem;position:relative;overflow:hidden;}
+    .stat-card::before{content:'';position:absolute;left:0;top:0;width:3px;height:100%;background:var(--green);}
+    .stat-card.red::before{background:var(--red);}
+    .stat-card.yellow::before{background:var(--yellow);}
+    .stat-card.blue::before{background:var(--blue);}
+    .stat-label{font-family:var(--pixel);font-size:6px;color:var(--gray);margin-bottom:8px;}
+    .stat-val{font-family:var(--pixel);font-size:13px;color:var(--green);}
+    .stat-val.red{color:var(--red);}
+    .stat-val.yellow{color:var(--yellow);}
+    .stat-val.blue{color:var(--blue);}
+    .blink{animation:blink 1s infinite;}
+    @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+    .row-btns{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+    .row-btns .btn{flex:1;min-width:120px;}
+
+    .info-box{background:var(--bg2);border:2px solid var(--border);padding:1.2rem;margin-bottom:1.5rem;}
+    .info-box-title{font-family:var(--pixel);font-size:7px;color:var(--gray);margin-bottom:10px;}
+    .addr-display{font-family:var(--mono);font-size:15px;color:var(--green);background:var(--bg3);border:1px solid var(--border2);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;word-break:break-all;}
+    .copy-btn{background:var(--bg2);border:1px solid var(--border2);color:var(--gray);font-family:var(--pixel);font-size:6px;padding:5px 10px;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+    .copy-btn:hover{color:var(--green);border-color:var(--green2);}
+
+    /* ===== CONSOLE ===== */
+    .console-wrap{background:var(--bg2);border:2px solid var(--border);height:calc(100vh - 185px);display:flex;flex-direction:column;}
+    .console-header{background:var(--bg3);border-bottom:2px solid var(--border);padding:8px 14px;font-family:var(--pixel);font-size:6px;color:var(--gray);display:flex;align-items:center;justify-content:space-between;}
+    .console-out{flex:1;overflow-y:auto;padding:8px 14px;font-family:var(--mono);font-size:13px;line-height:1.65;}
+    .console-out::-webkit-scrollbar{width:5px;}
+    .console-out::-webkit-scrollbar-track{background:var(--bg3);}
+    .console-out::-webkit-scrollbar-thumb{background:var(--border2);}
+    .log-line{padding:1px 0;word-break:break-all;}
+    .log-line .t{color:var(--gray);margin-right:8px;font-size:11px;}
+    .log-line.error .tx{color:var(--red);}
+    .log-line.warn .tx{color:var(--yellow);}
+    .log-line.command .tx{color:var(--blue);}
+    .console-in{border-top:2px solid var(--border);display:flex;align-items:center;padding:8px 14px;gap:10px;}
+    .console-prompt{font-family:var(--pixel);font-size:8px;color:var(--green);}
+    .console-field{flex:1;background:transparent;border:none;color:var(--white);font-family:var(--mono);font-size:14px;outline:none;}
+
+    /* ===== COMPTES ===== */
+    .section-hd{font-family:var(--pixel);font-size:8px;color:var(--green);margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid var(--border);}
+    .user-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;}
+    .user-table th{background:var(--bg3);font-family:var(--pixel);font-size:6px;color:var(--gray);padding:10px 12px;text-align:left;border-bottom:2px solid var(--border);}
+    .user-table td{padding:9px 12px;border-bottom:1px solid var(--border);font-size:13px;}
+    .user-table tr:hover td{background:rgba(255,255,255,0.02);}
+    .role-chip{font-family:var(--pixel);font-size:6px;padding:3px 8px;border:1px solid;}
+    .role-chip.admin{color:var(--green);border-color:var(--green2);}
+    .role-chip.user{color:var(--gray);border-color:var(--border2);}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+    .form-group{display:flex;flex-direction:column;gap:5px;}
+    .add-box{background:var(--bg2);border:2px solid var(--border);padding:1.2rem;}
+    .select-input{background:var(--bg3);border:2px solid var(--border2);color:var(--white);font-family:var(--mono);font-size:14px;padding:10px 12px;outline:none;width:100%;}
+
+    /* ===== PARAMETRES ===== */
+    .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+    .settings-card{background:var(--bg2);border:2px solid var(--border);padding:1.2rem;}
+    .settings-card-title{font-family:var(--pixel);font-size:7px;color:var(--green);margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid var(--border);}
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+    .toggle-label{font-family:var(--pixel);font-size:7px;color:var(--white);}
+    .toggle-desc{font-size:11px;color:var(--gray);margin-top:3px;}
+    .toggle{width:44px;height:22px;background:var(--border2);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+    .toggle.on{background:var(--green2);}
+    .toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--gray);transition:all .2s;}
+    .toggle.on::after{left:25px;background:var(--green);}
+    .warning-box{background:rgba(255,170,0,0.07);border:1px solid var(--yellow);padding:10px 14px;font-family:var(--pixel);font-size:6px;color:var(--yellow);line-height:1.8;margin-bottom:1rem;}
+
+    /* ===== MODAL ===== */
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:center;justify-content:center;}
+    .modal-bg.open{display:flex;}
+    .modal{background:var(--bg2);border:2px solid var(--border2);padding:1.5rem;width:360px;}
+    .modal-title{font-family:var(--pixel);font-size:8px;color:var(--green);margin-bottom:1.2rem;}
+    .modal-btns{display:flex;gap:10px;margin-top:1.2rem;}
+
+    /* ===== TOAST ===== */
+    #toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--bg2);border:2px solid var(--green2);color:var(--green);font-family:var(--pixel);font-size:7px;padding:11px 16px;z-index:999;transform:translateY(80px);opacity:0;transition:all .25s;max-width:280px;line-height:1.6;}
+    #toast.show{transform:translateY(0);opacity:1;}
+    #toast.error{border-color:var(--red);color:var(--red);}
+    #toast.ok{border-color:var(--green);color:var(--green);}
+
+    ::-webkit-scrollbar{width:5px;height:5px;}
+    ::-webkit-scrollbar-track{background:var(--bg3);}
+    ::-webkit-scrollbar-thumb{background:var(--border2);}
+    @media(max-width:600px){.settings-grid,.form-grid{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
- 
-<!-- ==================== LOGIN ==================== -->
-<div id="loginScreen">
-  <div class="login-box">
-    <div class="login-title">
+
+<!-- ==================== AUTH ==================== -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-box">
+    <div class="auth-title">
       ⬛ EAGLERCRAFT PANEL ⬛
-      <span>Connexion requise</span>
+      <small>Accès sécurisé</small>
     </div>
-    <label class="field-label">EMAIL</label>
-    <input class="field-input" type="email" id="loginEmail" placeholder="admin@eaglercraft.com" autocomplete="email">
-    <label class="field-label">MOT DE PASSE</label>
-    <input class="field-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
-    <button class="btn" onclick="login()">[ CONNEXION ]</button>
-    <div class="login-error" id="loginError"></div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuthTab('login')">CONNEXION</div>
+      <div class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">INSCRIPTION</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="auth-form active" id="formLogin">
+      <label class="field-label">EMAIL</label>
+      <input class="field-input" type="email" id="loginEmail" placeholder="admin@eaglercraft.com" autocomplete="email">
+      <label class="field-label">MOT DE PASSE</label>
+      <input class="field-input" type="password" id="loginPassword" placeholder="••••••••">
+      <button class="btn" onclick="login()">[ CONNEXION ]</button>
+      <div class="auth-error" id="loginError"></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-form" id="formRegister">
+      <div class="auth-closed" id="registerClosed" style="display:none">
+        ⚠ Les inscriptions sont actuellement fermées.
+      </div>
+      <label class="field-label">PSEUDO</label>
+      <input class="field-input" id="regUsername" placeholder="Steve">
+      <label class="field-label">EMAIL</label>
+      <input class="field-input" type="email" id="regEmail" placeholder="toi@example.com">
+      <label class="field-label">MOT DE PASSE (6 caractères min)</label>
+      <input class="field-input" type="password" id="regPassword" placeholder="••••••••">
+      <label class="field-label">CONFIRMER LE MOT DE PASSE</label>
+      <input class="field-input" type="password" id="regPassword2" placeholder="••••••••">
+      <button class="btn" id="registerBtn" onclick="register()">[ CRÉER UN COMPTE ]</button>
+      <div class="auth-error" id="registerError"></div>
+    </div>
   </div>
 </div>
- 
+
 <!-- ==================== MAIN APP ==================== -->
 <div id="mainApp">
   <header>
     <div class="header-logo">
       ⬛ EAGLERCRAFT PANEL
-      <span>BungeeCord Manager</span>
+      <small id="headerServerName">BungeeCord Manager</small>
     </div>
-    <div class="header-user">
-      <span id="headerUsername" class="user-badge"></span>
-      <button class="btn btn-small btn-red" onclick="logout()">DÉCONNEXION</button>
+    <div class="header-right">
+      <span class="user-chip" id="headerUser">...</span>
+      <button class="btn btn-sm btn-red" onclick="logout()">DÉCO</button>
     </div>
   </header>
- 
+
   <nav>
-    <div class="nav-item active" onclick="showPage('status')" id="nav-status">
-      <span class="nav-icon">◼</span> STATUT
-    </div>
-    <div class="nav-item" onclick="showPage('console')" id="nav-console">
-      <span class="nav-icon">▶</span> CONSOLE
-    </div>
-    <div class="nav-item" id="nav-compte" onclick="showPage('compte')">
-      <span class="nav-icon">★</span> COMPTES
-    </div>
+    <div class="nav-item active" id="nav-status" onclick="showPage('status')">◼ STATUT</div>
+    <div class="nav-item" id="nav-console" onclick="showPage('console')">▶ CONSOLE</div>
+    <div class="nav-item" id="nav-comptes" onclick="showPage('comptes')">★ COMPTES</div>
+    <div class="nav-item" id="nav-parametres" onclick="showPage('parametres')">⚙ PARAMÈTRES</div>
   </nav>
- 
-  <!-- ===== PAGE STATUS ===== -->
+
+  <!-- ===== STATUT ===== -->
   <div class="page active" id="page-status">
-    <div class="status-grid">
-      <div class="status-card" id="cardStatus">
-        <div class="card-label">STATUT DU SERVEUR</div>
-        <div class="card-value" id="statusValue">
-          <span class="status-dot red"></span>ARRÊTÉ
-        </div>
+    <div class="grid4">
+      <div class="stat-card" id="cardStatus">
+        <div class="stat-label">STATUT DU SERVEUR</div>
+        <div class="stat-val red" id="statusVal">● ARRÊTÉ</div>
       </div>
-      <div class="status-card blue">
-        <div class="card-label">UPTIME</div>
-        <div class="card-value" id="uptimeValue" style="color:var(--blue)">00:00:00</div>
+      <div class="stat-card blue">
+        <div class="stat-label">UPTIME</div>
+        <div class="stat-val blue" id="uptimeVal">00:00:00</div>
       </div>
-      <div class="status-card yellow">
-        <div class="card-label">LOGS ENREGISTRÉS</div>
-        <div class="card-value yellow" id="logCountValue">0</div>
+      <div class="stat-card yellow">
+        <div class="stat-label">LOGS</div>
+        <div class="stat-val yellow" id="logCountVal">0</div>
       </div>
-      <div class="status-card">
-        <div class="card-label">WEBSOCKET</div>
-        <div class="card-value" id="wsStatusValue">
-          <span class="status-dot red"></span>DÉCONNECTÉ
-        </div>
+      <div class="stat-card" id="cardWS">
+        <div class="stat-label">PANEL WEBSOCKET</div>
+        <div class="stat-val red" id="wsVal">● DÉCONNECTÉ</div>
       </div>
     </div>
- 
-    <div class="actions-row" id="adminActions" style="display:none">
+
+    <div class="row-btns" id="adminBtns" style="display:none">
       <button class="btn" id="btnStart" onclick="serverAction('start')">[ ▶ DÉMARRER ]</button>
       <button class="btn btn-red" id="btnStop" onclick="serverAction('stop')">[ ■ ARRÊTER ]</button>
     </div>
- 
-    <div style="background:var(--bg2);border:2px solid var(--border);padding:1.2rem;">
-      <div class="card-label" style="margin-bottom:10px">DERNIERS LOGS</div>
-      <div id="statusLogs" style="font-family:var(--mono);font-size:12px;color:var(--gray);max-height:200px;overflow-y:auto;line-height:1.8"></div>
+
+    <div class="info-box">
+      <div class="info-box-title">ADRESSE DE CONNEXION EAGLERCRAFT</div>
+      <div class="addr-display">
+        <span id="displayAddr">Chargement...</span>
+        <button class="copy-btn" onclick="copyAddr()">[ COPIER ]</button>
+      </div>
+      <div style="font-family:var(--pixel);font-size:6px;color:var(--gray);margin-top:8px;">
+        Entre cette adresse dans EaglerCraft → Multiplayer → Add Server
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">DERNIERS LOGS</div>
+      <div id="statusLogs" style="font-family:var(--mono);font-size:12px;color:var(--gray);max-height:180px;overflow-y:auto;line-height:1.8;"></div>
     </div>
   </div>
- 
-  <!-- ===== PAGE CONSOLE ===== -->
+
+  <!-- ===== CONSOLE ===== -->
   <div class="page" id="page-console">
     <div class="console-wrap">
       <div class="console-header">
         <span>CONSOLE BUNGEECORD</span>
-        <button class="console-send" onclick="clearConsole()">VIDER</button>
+        <button class="copy-btn" onclick="clearConsole()">VIDER</button>
       </div>
-      <div class="console-output" id="consoleOutput"></div>
-      <div class="console-input-row" id="consoleInputRow" style="display:none">
+      <div class="console-out" id="consoleOut"></div>
+      <div class="console-in" id="consoleIn" style="display:none">
         <span class="console-prompt">></span>
-        <input class="console-input" id="consoleInput" placeholder="Entrer une commande..." onkeydown="handleConsoleKey(event)">
-        <button class="console-send" onclick="sendConsoleCommand()">ENVOYER</button>
+        <input class="console-field" id="consoleField" placeholder="Entrer une commande..." onkeydown="if(event.key==='Enter')sendCmd()">
+        <button class="copy-btn" style="padding:7px 14px;" onclick="sendCmd()">ENVOYER</button>
       </div>
     </div>
   </div>
- 
-  <!-- ===== PAGE COMPTES ===== -->
-  <div class="page" id="page-compte">
-    <div class="section-title">⬛ GESTION DES COMPTES</div>
- 
+
+  <!-- ===== COMPTES ===== -->
+  <div class="page" id="page-comptes">
+    <div class="section-hd">⬛ UTILISATEURS</div>
     <table class="user-table">
-      <thead>
-        <tr>
-          <th>UTILISATEUR</th>
-          <th>EMAIL</th>
-          <th>RÔLE</th>
-          <th>ACTIONS</th>
-        </tr>
-      </thead>
-      <tbody id="userTableBody"></tbody>
+      <thead><tr><th>PSEUDO</th><th>EMAIL</th><th>RÔLE</th><th>ACTIONS</th></tr></thead>
+      <tbody id="userTbody"></tbody>
     </table>
- 
-    <div class="section-title">⬛ AJOUTER UN UTILISATEUR</div>
-    <div class="add-user-form">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="field-label">PSEUDO</label>
-          <input class="field-input" id="newUsername" placeholder="Steve">
+    <div class="section-hd">⬛ AJOUTER UN UTILISATEUR</div>
+    <div class="add-box">
+      <div class="form-grid">
+        <div class="form-group"><label class="field-label">PSEUDO</label><input class="field-input" id="newUser" placeholder="Steve"></div>
+        <div class="form-group"><label class="field-label">EMAIL</label><input class="field-input" type="email" id="newEmail" placeholder="user@example.com"></div>
+        <div class="form-group"><label class="field-label">MOT DE PASSE</label><input class="field-input" type="password" id="newPass" placeholder="••••••••"></div>
+        <div class="form-group"><label class="field-label">RÔLE</label><select class="select-input" id="newRole"><option value="user">Utilisateur</option><option value="admin">Admin</option></select></div>
+      </div>
+      <button class="btn btn-sm" onclick="addUser()">[ + AJOUTER ]</button>
+    </div>
+  </div>
+
+  <!-- ===== PARAMÈTRES ===== -->
+  <div class="page" id="page-parametres">
+    <div class="settings-grid">
+
+      <!-- Adresses serveur -->
+      <div class="settings-card">
+        <div class="settings-card-title">⬛ ADRESSES DU SERVEUR</div>
+        <div class="warning-box">
+          L'adresse affichée est celle montrée aux joueurs.<br>
+          L'adresse réelle (lobby) est utilisée dans config.yml de BungeeCord et n'est jamais visible par les joueurs.
         </div>
-        <div class="form-group">
-          <label class="field-label">EMAIL</label>
-          <input class="field-input" type="email" id="newEmail" placeholder="user@example.com">
+        <label class="field-label">ADRESSE AFFICHÉE AUX JOUEURS (ws://...)</label>
+        <input class="field-input" id="setDisplayAddr" placeholder="ws://mon-serveur.example.com:8081">
+        <label class="field-label">ADRESSE RÉELLE DU LOBBY (IP:PORT dans config.yml)</label>
+        <input class="field-input" id="setLobbyAddr" placeholder="ridgehead.aternos.host:22527">
+        <div style="font-family:var(--pixel);font-size:6px;color:var(--gray);margin-bottom:1rem;line-height:1.8">
+          Changer l'adresse réelle modifie automatiquement le config.yml de BungeeCord.<br>
+          Redémarre BungeeCord après la sauvegarde.
+        </div>
+        <button class="btn btn-sm" onclick="saveAddresses()">[ SAUVEGARDER ]</button>
+      </div>
+
+      <!-- Général -->
+      <div class="settings-card">
+        <div class="settings-card-title">⬛ GÉNÉRAL</div>
+        <label class="field-label">NOM DU SERVEUR</label>
+        <input class="field-input" id="setServerName" placeholder="Mon Serveur EaglerCraft">
+        <button class="btn btn-sm" style="margin-bottom:1.5rem" onclick="saveGeneral()">[ SAUVEGARDER ]</button>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">INSCRIPTIONS OUVERTES</div>
+            <div class="toggle-desc">Permet aux nouveaux joueurs de créer un compte</div>
+          </div>
+          <button class="toggle" id="toggleReg" onclick="toggleRegistration()"></button>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="field-label">MOT DE PASSE</label>
-          <input class="field-input" type="password" id="newPassword" placeholder="••••••••">
-        </div>
-        <div class="form-group">
-          <label class="field-label">RÔLE</label>
-          <select class="select-input" id="newRole">
-            <option value="user">Utilisateur</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
+
+      <!-- Mot de passe admin -->
+      <div class="settings-card">
+        <div class="settings-card-title">⬛ MOT DE PASSE ADMIN</div>
+        <label class="field-label">NOUVEAU MOT DE PASSE</label>
+        <input class="field-input" type="password" id="adminNewPass" placeholder="••••••••">
+        <label class="field-label">CONFIRMER</label>
+        <input class="field-input" type="password" id="adminNewPass2" placeholder="••••••••">
+        <button class="btn btn-sm btn-yellow" onclick="changeAdminPassword()">[ CHANGER ]</button>
       </div>
-      <button class="btn btn-small" onclick="addUser()">[ + AJOUTER ]</button>
+
     </div>
   </div>
 </div>
- 
-<!-- Modal changement mot de passe -->
-<div class="modal-overlay" id="pwModal">
+
+<!-- Modal mot de passe utilisateur -->
+<div class="modal-bg" id="pwModal">
   <div class="modal">
     <div class="modal-title">⬛ CHANGER LE MOT DE PASSE</div>
     <input type="hidden" id="pwUserId">
     <label class="field-label">NOUVEAU MOT DE PASSE</label>
-    <input class="field-input" type="password" id="pwNewPassword" placeholder="••••••••">
-    <div class="modal-actions">
-      <button class="btn btn-small" onclick="changePassword()">[ VALIDER ]</button>
-      <button class="btn btn-small btn-red" onclick="closeModal()">[ ANNULER ]</button>
+    <input class="field-input" type="password" id="pwNew" placeholder="••••••••">
+    <div class="modal-btns">
+      <button class="btn btn-sm" onclick="changeUserPassword()">[ VALIDER ]</button>
+      <button class="btn btn-sm btn-red" onclick="closeModal()">[ ANNULER ]</button>
     </div>
   </div>
 </div>
- 
-<!-- Toast -->
+
 <div id="toast"></div>
- 
+
 <script>
-  let ws = null;
-  let currentUser = null;
-  let serverStatus = 'stopped';
-  let startTime = null;
-  let uptimeInterval = null;
-  let autoScroll = true;
- 
-  // ==================== AUTH ====================
-  async function login() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    document.getElementById('loginError').textContent = '';
- 
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        document.getElementById('loginError').textContent = data.error;
-        return;
-      }
-      currentUser = data.user;
-      initApp();
-    } catch {
-      document.getElementById('loginError').textContent = 'Erreur de connexion';
+let ws = null, currentUser = null, serverStatus = 'stopped', startTime = null, uptimeTimer = null;
+let registrationOpen = true;
+
+// ==================== AUTH ====================
+async function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('formLogin').classList.toggle('active', tab==='login');
+  document.getElementById('formRegister').classList.toggle('active', tab==='register');
+  if (tab === 'register') await checkRegistrationStatus();
+}
+
+async function checkRegistrationStatus() {
+  // On essaie juste d'appeler register avec données vides pour voir si c'est fermé
+  // En fait on check via un endpoint public
+  try {
+    const r = await fetch('/api/register', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+    const d = await r.json();
+    if (d.error === 'Les inscriptions sont fermees.') {
+      document.getElementById('registerClosed').style.display = 'block';
+      document.getElementById('registerBtn').disabled = true;
     }
+  } catch {}
+}
+
+async function login() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  document.getElementById('loginError').textContent = '';
+  try {
+    const r = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const d = await r.json();
+    if (!r.ok) { document.getElementById('loginError').textContent = d.error; return; }
+    currentUser = d.user;
+    initApp();
+  } catch { document.getElementById('loginError').textContent = 'Erreur de connexion'; }
+}
+
+async function register() {
+  const username = document.getElementById('regUsername').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const password2 = document.getElementById('regPassword2').value;
+  document.getElementById('registerError').textContent = '';
+
+  if (!username || !email || !password) { document.getElementById('registerError').textContent = 'Remplis tous les champs.'; return; }
+  if (password !== password2) { document.getElementById('registerError').textContent = 'Les mots de passe ne correspondent pas.'; return; }
+
+  try {
+    const r = await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,email,password})});
+    const d = await r.json();
+    if (!r.ok) { document.getElementById('registerError').textContent = d.error; return; }
+    currentUser = d.user;
+    initApp();
+  } catch { document.getElementById('registerError').textContent = 'Erreur lors de la création'; }
+}
+
+document.getElementById('loginPassword').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+
+async function logout() { await fetch('/api/logout',{method:'POST'}); location.reload(); }
+
+async function checkSession() {
+  try {
+    const r = await fetch('/api/me');
+    if (r.ok) { const d = await r.json(); currentUser = d.user; initApp(); }
+  } catch {}
+}
+
+function initApp() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('headerUser').textContent = currentUser.username + ' [' + currentUser.role.toUpperCase() + ']';
+
+  if (currentUser.role !== 'admin') {
+    document.getElementById('nav-comptes').style.display = 'none';
+    document.getElementById('nav-parametres').style.display = 'none';
+  } else {
+    document.getElementById('adminBtns').style.display = 'flex';
+    document.getElementById('consoleIn').style.display = 'flex';
+    loadUsers();
+    loadSettings();
   }
- 
-  document.getElementById('loginPassword').addEventListener('keydown', e => {
-    if (e.key === 'Enter') login();
-  });
- 
-  async function logout() {
-    await fetch('/api/logout', { method: 'POST' });
-    location.reload();
+
+  loadServerInfo();
+  connectWS();
+  loadStatus();
+}
+
+// ==================== WEBSOCKET ====================
+function connectWS() {
+  ws = new WebSocket('ws://' + location.host);
+  ws.onopen = () => setWS(true);
+  ws.onclose = () => { setWS(false); setTimeout(connectWS, 3000); };
+  ws.onmessage = e => {
+    const m = JSON.parse(e.data);
+    if (m.type === 'init') { m.data.logs.forEach(appendLog); handleStatus(m.data.status, m.data.startTime); }
+    else if (m.type === 'log') { appendLog(m.data); syncStatusLogs(); }
+    else if (m.type === 'status') handleStatus(m.data.status, m.data.startTime);
+  };
+}
+
+function setWS(on) {
+  const el = document.getElementById('wsVal');
+  if (on) { el.textContent = '● CONNECTÉ'; el.className = 'stat-val'; }
+  else { el.textContent = '● DÉCONNECTÉ'; el.className = 'stat-val red'; }
+}
+
+// ==================== STATUS ====================
+async function loadStatus() {
+  try {
+    const r = await fetch('/api/server/status');
+    const d = await r.json();
+    d.logs.forEach(appendLog);
+    handleStatus(d.status, d.startTime);
+  } catch {}
+}
+
+async function loadServerInfo() {
+  try {
+    const r = await fetch('/api/server/info');
+    const d = await r.json();
+    document.getElementById('displayAddr').textContent = d.displayAddress;
+    document.getElementById('headerServerName').textContent = d.serverName;
+  } catch {}
+}
+
+function handleStatus(status, sTime) {
+  serverStatus = status; startTime = sTime;
+  const el = document.getElementById('statusVal');
+  if (status === 'running') {
+    el.textContent = '● EN LIGNE'; el.className = 'stat-val blink';
+    startUptime();
+  } else if (status === 'starting' || status === 'stopping') {
+    el.textContent = '● ' + (status==='starting'?'DÉMARRAGE...':'ARRÊT...');
+    el.className = 'stat-val yellow';
+  } else {
+    el.textContent = '● ARRÊTÉ'; el.className = 'stat-val red';
+    stopUptime();
   }
- 
-  async function checkSession() {
-    try {
-      const res = await fetch('/api/me');
-      if (res.ok) {
-        const data = await res.json();
-        currentUser = data.user;
-        initApp();
-      }
-    } catch {}
-  }
- 
-  function initApp() {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('headerUsername').textContent = currentUser.username + ' [' + currentUser.role.toUpperCase() + ']';
- 
-    if (currentUser.role === 'admin') {
-      document.getElementById('adminActions').style.display = 'flex';
-      document.getElementById('consoleInputRow').style.display = 'flex';
-    } else {
-      document.getElementById('nav-compte').style.display = 'none';
-    }
- 
-    connectWS();
-    loadStatus();
-    if (currentUser.role === 'admin') loadUsers();
-  }
- 
-  // ==================== WEBSOCKET ====================
-  function connectWS() {
-    ws = new WebSocket(`ws://${location.host}`);
- 
-    ws.onopen = () => {
-      updateWsStatus(true);
-    };
- 
-    ws.onclose = () => {
-      updateWsStatus(false);
-      setTimeout(connectWS, 3000);
-    };
- 
-    ws.onmessage = e => {
-      const msg = JSON.parse(e.data);
-      if (msg.type === 'init') {
-        msg.data.logs.forEach(log => appendLog(log));
-        handleStatusUpdate(msg.data.status, msg.data.startTime);
-      } else if (msg.type === 'log') {
-        appendLog(msg.data);
-        updateStatusLogs();
-      } else if (msg.type === 'status') {
-        handleStatusUpdate(msg.data.status, msg.data.startTime);
-      }
-    };
-  }
- 
-  function updateWsStatus(connected) {
-    const el = document.getElementById('wsStatusValue');
-    if (connected) {
-      el.innerHTML = '<span class="status-dot"></span>CONNECTÉ';
-      el.style.color = 'var(--green)';
-    } else {
-      el.innerHTML = '<span class="status-dot red"></span>DÉCONNECTÉ';
-      el.style.color = 'var(--red)';
-    }
-  }
- 
-  // ==================== STATUS ====================
-  async function loadStatus() {
-    try {
-      const res = await fetch('/api/server/status');
-      const data = await res.json();
-      data.logs.forEach(log => appendLog(log));
-      handleStatusUpdate(data.status, data.startTime);
-    } catch {}
-  }
- 
-  function handleStatusUpdate(status, sTime) {
-    serverStatus = status;
-    startTime = sTime;
- 
-    const el = document.getElementById('statusValue');
-    const card = document.getElementById('cardStatus');
- 
-    if (status === 'running') {
-      el.innerHTML = '<span class="status-dot"></span>EN LIGNE';
-      el.style.color = 'var(--green)';
-      card.style.borderLeftColor = 'var(--green)';
-      startUptimeCounter();
-    } else if (status === 'starting' || status === 'stopping') {
-      el.innerHTML = '<span class="status-dot yellow"></span>' + (status === 'starting' ? 'DÉMARRAGE...' : 'ARRÊT...');
-      el.style.color = 'var(--yellow)';
-    } else {
-      el.innerHTML = '<span class="status-dot red"></span>ARRÊTÉ';
-      el.style.color = 'var(--red)';
-      stopUptimeCounter();
-    }
- 
-    const btnStart = document.getElementById('btnStart');
-    const btnStop = document.getElementById('btnStop');
-    if (btnStart && btnStop) {
-      btnStart.disabled = status !== 'stopped';
-      btnStop.disabled = status === 'stopped';
-    }
-  }
- 
-  function startUptimeCounter() {
-    if (uptimeInterval) clearInterval(uptimeInterval);
-    uptimeInterval = setInterval(() => {
-      if (!startTime) return;
-      const secs = Math.floor((Date.now() - startTime) / 1000);
-      const h = String(Math.floor(secs / 3600)).padStart(2, '0');
-      const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
-      const s = String(secs % 60).padStart(2, '0');
-      document.getElementById('uptimeValue').textContent = `${h}:${m}:${s}`;
-    }, 1000);
-  }
- 
-  function stopUptimeCounter() {
-    if (uptimeInterval) clearInterval(uptimeInterval);
-    document.getElementById('uptimeValue').textContent = '00:00:00';
-  }
- 
-  // ==================== CONSOLE ====================
-  function appendLog(entry) {
-    const out = document.getElementById('consoleOutput');
-    const line = document.createElement('div');
-    line.className = `log-line ${entry.type}`;
-    line.innerHTML = `<span class="time">[${entry.time}]</span><span class="text">${escapeHtml(entry.text)}</span>`;
-    out.appendChild(line);
- 
-    document.getElementById('logCountValue').textContent = out.children.length;
- 
-    if (autoScroll) out.scrollTop = out.scrollHeight;
- 
-    updateStatusLogs();
-  }
- 
-  function updateStatusLogs() {
-    const out = document.getElementById('consoleOutput');
-    const statusLogs = document.getElementById('statusLogs');
-    const lines = Array.from(out.children).slice(-10);
-    statusLogs.innerHTML = lines.map(l => `<div style="color:${l.classList.contains('error') ? 'var(--red)' : l.classList.contains('warn') ? 'var(--yellow)' : 'var(--gray)'}">${l.textContent}</div>`).join('');
-    statusLogs.scrollTop = statusLogs.scrollHeight;
-  }
- 
-  function clearConsole() {
-    document.getElementById('consoleOutput').innerHTML = '';
-    document.getElementById('logCountValue').textContent = '0';
-  }
- 
-  function handleConsoleKey(e) {
-    if (e.key === 'Enter') sendConsoleCommand();
-  }
- 
-  async function sendConsoleCommand() {
-    const input = document.getElementById('consoleInput');
-    const command = input.value.trim();
-    if (!command) return;
-    input.value = '';
-    await fetch('/api/server/command', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ command }),
-    });
-  }
- 
-  // ==================== SERVER ACTIONS ====================
-  async function serverAction(action) {
-    await fetch(`/api/server/${action}`, { method: 'POST' });
-  }
- 
-  // ==================== USERS ====================
-  async function loadUsers() {
-    try {
-      const res = await fetch('/api/users');
-      const data = await res.json();
-      renderUsers(data.users);
-    } catch {}
-  }
- 
-  function renderUsers(users) {
-    const tbody = document.getElementById('userTableBody');
-    tbody.innerHTML = users.map(u => `
-      <tr>
-        <td>${escapeHtml(u.username)}</td>
-        <td>${escapeHtml(u.email)}</td>
-        <td><span class="role-badge ${u.role}">${u.role.toUpperCase()}</span></td>
-        <td>
-          ${u.id !== 'admin' ? `
-            <button class="btn btn-small" onclick="openPwModal('${u.id}')">MOT DE PASSE</button>
-            <button class="btn btn-small btn-red" onclick="deleteUser('${u.id}')">SUPPRIMER</button>
-          ` : '<span style="color:var(--gray);font-size:11px">Compte principal</span>'}
-        </td>
-      </tr>
-    `).join('');
-  }
- 
-  async function addUser() {
-    const username = document.getElementById('newUsername').value.trim();
-    const email = document.getElementById('newEmail').value.trim();
-    const password = document.getElementById('newPassword').value;
-    const role = document.getElementById('newRole').value;
- 
-    if (!username || !email || !password) {
-      showToast('Remplis tous les champs !', true);
-      return;
-    }
- 
-    const res = await fetch('/api/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, email, password, role }),
-    });
- 
-    if (res.ok) {
-      showToast('Utilisateur créé !');
-      document.getElementById('newUsername').value = '';
-      document.getElementById('newEmail').value = '';
-      document.getElementById('newPassword').value = '';
-      loadUsers();
-    } else {
-      showToast('Erreur lors de la création', true);
-    }
-  }
- 
-  async function deleteUser(id) {
-    if (!confirm('Supprimer cet utilisateur ?')) return;
-    const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
-    if (res.ok) { showToast('Utilisateur supprimé !'); loadUsers(); }
-  }
- 
-  function openPwModal(id) {
-    document.getElementById('pwUserId').value = id;
-    document.getElementById('pwNewPassword').value = '';
-    document.getElementById('pwModal').classList.add('open');
-  }
- 
-  function closeModal() {
-    document.getElementById('pwModal').classList.remove('open');
-  }
- 
-  async function changePassword() {
-    const id = document.getElementById('pwUserId').value;
-    const password = document.getElementById('pwNewPassword').value;
-    if (!password) return;
-    const res = await fetch(`/api/users/${id}/password`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
-    });
-    if (res.ok) { showToast('Mot de passe changé !'); closeModal(); }
-  }
- 
-  // ==================== NAVIGATION ====================
-  function showPage(page) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById(`page-${page}`).classList.add('active');
-    document.getElementById(`nav-${page}`).classList.add('active');
-    if (page === 'console') {
-      setTimeout(() => {
-        const out = document.getElementById('consoleOutput');
-        out.scrollTop = out.scrollHeight;
-      }, 50);
-    }
-  }
- 
-  // ==================== UTILS ====================
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
- 
-  function showToast(msg, error = false) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.className = 'show' + (error ? ' error' : '');
-    setTimeout(() => toast.className = '', 3000);
-  }
- 
-  // ==================== INIT ====================
-  checkSession();
+  const s = document.getElementById('btnStart'), p = document.getElementById('btnStop');
+  if (s && p) { s.disabled = status !== 'stopped'; p.disabled = status === 'stopped'; }
+}
+
+function startUptime() {
+  if (uptimeTimer) clearInterval(uptimeTimer);
+  uptimeTimer = setInterval(() => {
+    if (!startTime) return;
+    const s = Math.floor((Date.now()-startTime)/1000);
+    document.getElementById('uptimeVal').textContent =
+      String(Math.floor(s/3600)).padStart(2,'0') + ':' +
+      String(Math.floor((s%3600)/60)).padStart(2,'0') + ':' +
+      String(s%60).padStart(2,'0');
+  }, 1000);
+}
+function stopUptime() {
+  if (uptimeTimer) clearInterval(uptimeTimer);
+  document.getElementById('uptimeVal').textContent = '00:00:00';
+}
+
+function copyAddr() {
+  const addr = document.getElementById('displayAddr').textContent;
+  navigator.clipboard.writeText(addr).then(() => toast('Adresse copiée !')).catch(() => toast('Impossible de copier', true));
+}
+
+// ==================== CONSOLE ====================
+function appendLog(entry) {
+  const out = document.getElementById('consoleOut');
+  const d = document.createElement('div');
+  d.className = 'log-line ' + (entry.type || 'info');
+  d.innerHTML = '<span class="t">[' + entry.time + ']</span><span class="tx">' + esc(entry.text) + '</span>';
+  out.appendChild(d);
+  document.getElementById('logCountVal').textContent = out.children.length;
+  out.scrollTop = out.scrollHeight;
+  syncStatusLogs();
+}
+
+function syncStatusLogs() {
+  const out = document.getElementById('consoleOut');
+  const sl = document.getElementById('statusLogs');
+  const lines = Array.from(out.children).slice(-8);
+  sl.innerHTML = lines.map(l => '<div style="color:' + (l.classList.contains('error')?'var(--red)':l.classList.contains('warn')?'var(--yellow)':'var(--gray)') + '">' + l.textContent + '</div>').join('');
+  sl.scrollTop = sl.scrollHeight;
+}
+
+function clearConsole() { document.getElementById('consoleOut').innerHTML = ''; document.getElementById('logCountVal').textContent = '0'; }
+
+async function sendCmd() {
+  const f = document.getElementById('consoleField');
+  const cmd = f.value.trim(); if (!cmd) return; f.value = '';
+  await fetch('/api/server/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:cmd})});
+}
+
+async function serverAction(action) {
+  await fetch('/api/server/'+action,{method:'POST'});
+}
+
+// ==================== SETTINGS ====================
+async function loadSettings() {
+  try {
+    const r = await fetch('/api/settings');
+    const d = await r.json();
+    document.getElementById('setDisplayAddr').value = d.displayAddress || '';
+    document.getElementById('setLobbyAddr').value = d.lobbyAddress || '';
+    document.getElementById('setServerName').value = d.serverName || '';
+    registrationOpen = d.registrationOpen !== false;
+    const tog = document.getElementById('toggleReg');
+    tog.classList.toggle('on', registrationOpen);
+  } catch {}
+}
+
+async function saveAddresses() {
+  const displayAddress = document.getElementById('setDisplayAddr').value.trim();
+  const lobbyAddress = document.getElementById('setLobbyAddr').value.trim();
+  if (!displayAddress) { toast('Adresse affichée manquante', true); return; }
+  const r = await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({displayAddress,lobbyAddress})});
+  const d = await r.json();
+  if (r.ok) { toast('Adresses sauvegardées !'); loadServerInfo(); }
+  else toast(d.error || 'Erreur', true);
+}
+
+async function saveGeneral() {
+  const serverName = document.getElementById('setServerName').value.trim();
+  if (!serverName) { toast('Nom manquant', true); return; }
+  const r = await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({serverName})});
+  if (r.ok) { toast('Nom sauvegardé !'); loadServerInfo(); }
+}
+
+async function toggleRegistration() {
+  registrationOpen = !registrationOpen;
+  document.getElementById('toggleReg').classList.toggle('on', registrationOpen);
+  await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({registrationOpen})});
+  toast(registrationOpen ? 'Inscriptions ouvertes' : 'Inscriptions fermées');
+}
+
+async function changeAdminPassword() {
+  const p1 = document.getElementById('adminNewPass').value;
+  const p2 = document.getElementById('adminNewPass2').value;
+  if (!p1) { toast('Mot de passe vide', true); return; }
+  if (p1 !== p2) { toast('Les mots de passe ne correspondent pas', true); return; }
+  if (p1.length < 6) { toast('Mot de passe trop court', true); return; }
+  const r = await fetch('/api/users/admin/password',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:p1})});
+  if (r.ok) { toast('Mot de passe admin changé !'); document.getElementById('adminNewPass').value=''; document.getElementById('adminNewPass2').value=''; }
+  else toast('Erreur', true);
+}
+
+// ==================== USERS ====================
+async function loadUsers() {
+  try {
+    const r = await fetch('/api/users');
+    const d = await r.json();
+    renderUsers(d.users);
+  } catch {}
+}
+
+function renderUsers(users) {
+  document.getElementById('userTbody').innerHTML = users.map(u => `
+    <tr>
+      <td>${esc(u.username)}</td>
+      <td>${esc(u.email)}</td>
+      <td><span class="role-chip ${u.role}">${u.role.toUpperCase()}</span></td>
+      <td style="display:flex;gap:8px;flex-wrap:wrap">
+        ${u.id !== 'admin' ? `
+          <button class="btn btn-sm" onclick="openPwModal('${u.id}')">MOT DE PASSE</button>
+          <button class="btn btn-sm btn-red" onclick="deleteUser('${u.id}')">SUPPR</button>
+        ` : '<span style="color:var(--gray);font-size:11px">Compte principal</span>'}
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function addUser() {
+  const username = document.getElementById('newUser').value.trim();
+  const email = document.getElementById('newEmail').value.trim();
+  const password = document.getElementById('newPass').value;
+  const role = document.getElementById('newRole').value;
+  if (!username||!email||!password) { toast('Remplis tous les champs !', true); return; }
+  const r = await fetch('/api/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,email,password,role})});
+  if (r.ok) { toast('Utilisateur créé !'); document.getElementById('newUser').value=''; document.getElementById('newEmail').value=''; document.getElementById('newPass').value=''; loadUsers(); }
+  else { const d = await r.json(); toast(d.error||'Erreur', true); }
+}
+
+async function deleteUser(id) {
+  if (!confirm('Supprimer cet utilisateur ?')) return;
+  const r = await fetch('/api/users/'+id,{method:'DELETE'});
+  if (r.ok) { toast('Supprimé !'); loadUsers(); }
+}
+
+function openPwModal(id) {
+  document.getElementById('pwUserId').value = id;
+  document.getElementById('pwNew').value = '';
+  document.getElementById('pwModal').classList.add('open');
+}
+function closeModal() { document.getElementById('pwModal').classList.remove('open'); }
+
+async function changeUserPassword() {
+  const id = document.getElementById('pwUserId').value;
+  const password = document.getElementById('pwNew').value;
+  if (!password) return;
+  const r = await fetch('/api/users/'+id+'/password',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});
+  if (r.ok) { toast('Mot de passe changé !'); closeModal(); }
+}
+
+// ==================== NAVIGATION ====================
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('nav-'+page).classList.add('active');
+  if (page==='console') setTimeout(()=>{ const o=document.getElementById('consoleOut'); o.scrollTop=o.scrollHeight; },50);
+}
+
+// ==================== UTILS ====================
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg, error) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (error ? 'error' : 'ok');
+  setTimeout(() => t.className = '', 3000);
+}
+
+// ==================== INIT ====================
+checkSession();
 </script>
 </body>
 </html>
- 
